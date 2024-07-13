@@ -2,10 +2,15 @@ from flask import Flask, jsonify, request
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import subprocess
-import urllib.parse
+from dotenv import load_dotenv
+import os
+from os.path import join, dirname
 
-SPOTIFY_CLIENT_ID="7bbc84e56a3147c3a43f7dace62f38f3"
-SPOTIFY_CLIENT_SECRET="8d79b82120a5473cab53d86801f4b3af"
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path=dotenv_path)
+
+SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
 app = Flask(__name__)
 
 client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)

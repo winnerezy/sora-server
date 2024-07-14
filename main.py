@@ -5,6 +5,7 @@ import subprocess
 from dotenv import load_dotenv
 import os
 from os.path import join, dirname
+import json
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -36,7 +37,7 @@ def get_url():
                     break
         
         if link:
-            return jsonify({ "link": str(link) })
+            return jsonify(link)
         
         else:
                 return jsonify({"message": "YouTube URL not found in spotdl output"}), 404

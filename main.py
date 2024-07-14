@@ -29,7 +29,7 @@ def get_url():
 
             link = None
             for line in output_lines:
-                if line.startswith('https://rr2'):
+                if line.startswith('https://rr'):
                     link = line
                     break
        
@@ -81,4 +81,4 @@ def get_song():
         return jsonify({ "message": str(e) }), 500
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")

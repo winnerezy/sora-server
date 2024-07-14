@@ -24,18 +24,19 @@ def get_url():
         spotify_url = request.args.get('url')
         result = subprocess.run(['spotdl', 'url', spotify_url ], capture_output=True, text=True)
 
+        # sometimes it works sometimes is doesn't
         if result.returncode == 0:
 
             output_lines = result.stdout.splitlines()
 
-            # link = None
-            # for line in output_lines:
-            #     if line.startswith('https://'):
-            #         link = line
-            #         break
+            link = None
+            for line in output_lines:
+                if line.startswith('https://'):
+                    link = line
+                    break
         
-        # if link:
-            return jsonify({ "link": str(output_lines) })
+        if link:
+            return jsonify({ "link": str(link) })
         
         else:
                 return jsonify({"message": "YouTube URL not found in spotdl output"}), 404

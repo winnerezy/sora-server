@@ -37,7 +37,7 @@ def get_url():
                     break
         
         if link:
-            return jsonify(link)
+            return jsonify({ "link": link })
         
         else:
                 return jsonify({"message": "YouTube URL not found in spotdl output"}), 404

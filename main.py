@@ -28,14 +28,14 @@ def get_url():
 
             output_lines = result.stdout.splitlines()
 
-            link = None
-            for line in output_lines:
-                if line.startswith('https://rr'):
-                    link = line
-                    break
+            # link = None
+            # for line in output_lines:
+            #     if line.startswith('https://'):
+            #         link = line
+            #         break
         
-        if link:
-            return jsonify({ "link": str(link) })
+        # if link:
+            return jsonify({ "link": str(output_lines) })
         
         else:
                 return jsonify({"message": "YouTube URL not found in spotdl output"}), 404

@@ -11,6 +11,7 @@ load_dotenv(dotenv_path=dotenv_path)
 
 SPOTIFY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
+
 app = Flask(__name__)
 
 client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)
@@ -32,9 +33,9 @@ def get_url():
                 if line.startswith('https://rr'):
                     link = line
                     break
-       
+        
         if link:
-            return jsonify({ "link": link })
+            return jsonify({ "link": str(link) })
         
         else:
                 return jsonify({"message": "YouTube URL not found in spotdl output"}), 404

@@ -5,7 +5,7 @@ import subprocess
 from dotenv import load_dotenv
 import os
 from os.path import join, dirname
-import json
+import re
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -19,30 +19,39 @@ client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_I
 
 spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+def get_spotify_track_id(spotify_url):
+    match = re.match(r'https://open.spotify.com/track/(\w+)', spotify_url)
+    if match:
+        return match.group(1)
+    return None
+
 @app.route('/play')
 def get_url():
     try:
         spotify_url = request.args.get('url')
-        result = subprocess.run(['spotdl', 'url', spotify_url ], capture_output=True, text=True)
+        # result = subprocess.run(['spotdl', 'url', spotify_url ], capture_output=True, text=True)
 
-        # sometimes it works sometimes is doesn't
-        if result.returncode == 0:
+        track_id = get_spotify_track_id(spotify_url=spotify_url)
 
-            output_lines = result.stdout.splitlines()
-
-            link = None
-            for line in output_lines:
-                if line.startswith('https://'):
-                    link = line
-                    break
+        if not track_id:
+            return jsonify({"error": "Invalid Spotify URL"}), 400
         
-        if link:
-            return jsonify({ "link": link })
+        track = spotify.track(track_id=track_id)
+
+        track_name = track['name']
+        artists = ", ".join([artist['name'] for artist in track['artists']])
+
+        search_query = f"{track_name} {artists}"
+
+        yt_dlp_command = f'yt-dlp "ytsearch1:{search_query}" --get-url --extract-audio'
         
-        else:
-                return jsonify({"message": "YouTube URL not found in spotdl output"}), 404
+        result = subprocess.run(yt_dlp_command, shell=True, capture_output=True, text=True)
 
+        if result.returncode != 0:
+            return jsonify({"error": "Failed to download song", "details": result.stderr}), 500
 
+        return jsonify({"link": result.stdout})
+       
     except Exception as e:
         return jsonify({ "message": str(e) }), 500
  
